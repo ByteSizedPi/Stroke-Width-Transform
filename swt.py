@@ -7,6 +7,7 @@ from skimage.draw import line as skline
 from skimage.feature import canny
 from skimage.filters import scharr_h, scharr_v
 from skimage.io import imread
+from skimage.measure import label
 
 Image = np.ndarray
 SubImage = np.ndarray
@@ -132,17 +133,73 @@ def swt(img: Image, edge_map: Image, gradients: Gradients, grad_dir: int) -> Ima
     return projection
 
 
+def store_equivalent_labels(eq_labels, label1, label2):
+    """
+    Store the equivalence relationship between two labels in a dictionary.
+
+    Args:
+        eq_labels (dict): A dictionary of equivalent labels.
+        label1 (int): The first label to be stored.
+        label2 (int): The second label to be stored.
+    """
+    # Find the root labels for the two labels
+    root1 = label1
+    while eq_labels.get(root1, None) is not None:
+        root1 = eq_labels[root1]
+    root2 = label2
+    while eq_labels.get(root2, None) is not None:
+        root2 = eq_labels[root2]
+
+    # Store the equivalence relationship
+    if root1 != root2:
+        eq_labels[root2] = root1
+
+
+def connected_components(swt: Image):
+    label = 0
+    labels = np.zeros(swt.shape, dtype=np.int32)
+
+    def neighbors(i, j):
+        yield i - 1, j
+        yield i, j - 1
+        yield i - 1, j - 1
+
+    for i, j in np.argwhere(swt != 0):
+        neighs = [labels[x, y] for x, y in neighbors(i, j) if labels[x, y] != 0]
+        neighs = list(set(neighs))
+
+        if not neighs:
+            labels[i, j] = label = label + 1
+            continue
+
+        labels[i, j] = min(neighs)
+
+    return labels
+
+
 if __name__ == "__main__":
-    fig, axes = plt.subplots(1, 1, figsize=(8, 8))
-    # ax = axes.ravel()
+    fig, axes = plt.subplots(2, 1, figsize=(8, 8))
+    ax = axes.ravel()
 
     img = imread("../Images/test/text-0.png", as_gray=True)
+    # declare a new image type
+
     # img = imread("../Images/test/text.jpg", as_gray=True)
 
     canny_img = canny(img)
     gradients = (scharr_h(img), scharr_v(img))
     swt_img = swt(img, canny_img, gradients, -1)
+    # con_img = label(
+    #     swt_img,
+    #     # img
+    #     connectivity=2,
+    #     # return_num=False,
+    # )
+    con_img = connected_components(swt_img)
 
-    axes.set_title("SWT")
-    axes.imshow(swt_img, cmap="gray")
+    ax[0].set_title("SWT")
+    ax[0].imshow(swt_img, cmap="gray")
+
+    ax[1].set_title("Connected Components")
+    ax[1].imshow(con_img, cmap="gray")
     plt.show()
