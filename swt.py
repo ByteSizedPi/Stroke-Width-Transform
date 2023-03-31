@@ -3,12 +3,10 @@ from typing import Iterator, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
-from skimage import measure
 from skimage.draw import line as skline
 from skimage.feature import canny
 from skimage.filters import scharr_h, scharr_v
 from skimage.io import imread
-from swt_src import swt as swt2
 
 Image = np.ndarray
 SubImage = np.ndarray
