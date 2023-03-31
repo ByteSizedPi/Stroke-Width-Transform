@@ -216,38 +216,38 @@ def connected_components(swt: Image) -> Image:
     return labels
 
 
-def compare():
-    fig, axes = plt.subplots(2, 3, figsize=(8, 8))
-    ax = axes.ravel()
+# def compare():
+#     fig, axes = plt.subplots(2, 3, figsize=(8, 8))
+#     ax = axes.ravel()
 
-    # img = imread("../Images/test/text-0.png", as_gray=True)
-    # img = imread("../Images/test/text.jpg", as_gray=True)
-    img = imread("../Images/test/swt-test.png", as_gray=True)
+#     # img = imread("../Images/test/text-0.png", as_gray=True)
+#     # img = imread("../Images/test/text.jpg", as_gray=True)
+#     img = imread("../Images/test/swt-test.png", as_gray=True)
 
-    edges, gradients, angles = derivatives(img, -1)
-    swt_img = swt(img, edges, gradients, angles)
+#     edges, gradients, angles = derivatives(img, -1)
+#     swt_img = swt(img, edges, gradients, angles)
 
-    edges2, angles2, swt_img2 = swt2(img)
+#     # edges2, angles2, swt_img2 = swt2(img)
 
-    ax[0].set_title("SK Edge Map")
-    ax[0].imshow(edges, cmap="gray")
+#     ax[0].set_title("SK Edge Map")
+#     ax[0].imshow(edges, cmap="gray")
 
-    ax[1].set_title("Gradient Map")
-    ax[1].imshow(angles * 180 / np.pi, cmap="gray")
+#     ax[1].set_title("Gradient Map")
+#     ax[1].imshow(angles * 180 / np.pi, cmap="gray")
 
-    ax[2].set_title("My SWT")
-    ax[2].imshow(swt_img, cmap="gray")
+#     ax[2].set_title("My SWT")
+#     ax[2].imshow(swt_img, cmap="gray")
 
-    ax[3].set_title("CV Edge Map")
-    ax[3].imshow(edges2, cmap="gray")
+#     ax[3].set_title("CV Edge Map")
+#     ax[3].imshow(edges2, cmap="gray")
 
-    ax[4].set_title("Gradient Map")
-    ax[4].imshow(angles2 * 180 / np.pi, cmap="gray")
+#     ax[4].set_title("Gradient Map")
+#     ax[4].imshow(angles2 * 180 / np.pi, cmap="gray")
 
-    ax[5].set_title("OG SWT")
-    ax[5].imshow(swt_img2, cmap="gray")
+#     ax[5].set_title("OG SWT")
+#     ax[5].imshow(swt_img2, cmap="gray")
 
-    plt.show()
+#     plt.show()
 
 
 def compare2():
