@@ -1,5 +1,5 @@
 from math import floor
-from typing import Iterator, Tuple
+from typing import Dict, Iterator, List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,7 +13,9 @@ SubImage = np.ndarray
 GradientImg = np.ndarray
 Gradients = Tuple[GradientImg, GradientImg]
 Dimensions = Tuple[int, int]
+
 Position = Tuple[int, int]
+Components = Dict[int, List[Position]]
 Gradient = Tuple[float, float]
 Ray = Iterator[Tuple[int, int]]
 
@@ -148,18 +150,18 @@ def store_equivalent_labels(eq_labels: dict, label1, label2):
         eq_labels[root2] = root1
 
 
-def simplify_labels(labels: dict):
-    unique = np.unique(labels)
+# def simplify_labels(labels: dict):
+#     unique = np.unique(labels)
 
-    # create an array of successive integer labels
-    new_labels = np.arange(len(unique))
+#     # create an array of successive integer labels
+#     new_labels = np.arange(len(unique))
 
-    # create a dictionary to map old labels to new labels
-    label_map = dict(zip(unique, new_labels))
+#     # create a dictionary to map old labels to new labels
+#     label_map = dict(zip(unique, new_labels))
 
-    # replace the old labels with new labels
-    for old_label, new_label in label_map.items():
-        labels[labels == old_label] = new_label
+#     # replace the old labels with new labels
+#     for old_label, new_label in label_map.items():
+#         labels[labels == old_label] = new_label
 
 
 def connected_components(swt: Image) -> Image:
@@ -212,7 +214,25 @@ def connected_components(swt: Image) -> Image:
             root = eq_labels[root]
         labels[i, j] = root
 
-    simplify_labels(labels)
+    unique = np.unique(labels)
+    components: Components = {l: [] for l in unique}
+
+    # group the indices of each connected component
+    for index, value in np.ndenumerate(labels):
+        components[value].append(index)
+
+    final_components = {}
+
+    # remove connected components with too high a variance
+    for label, indices in components.items():
+        if label == 0:
+            continue
+
+        swt_values = [swt[i] for i in indices]
+        threshold = np.average(swt_values) / 2
+
+        if np.var(swt_values) <= threshold:
+            final_components[label] = indices
     return labels
 
 
