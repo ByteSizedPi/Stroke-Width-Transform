@@ -2,7 +2,7 @@ from math import ceil, sqrt
 
 import matplotlib.pyplot as plt
 
-plt.rcParams["figure.figsize"] = (10, 10)
+plt.rcParams["figure.figsize"] = (20, 20)
 
 
 def dims(i):
